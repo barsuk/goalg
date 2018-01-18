@@ -2,6 +2,7 @@ package main
 
 import "fmt"
 import "goalg/dijkstra"
+import pq "goalg/pqueue"
 
 var adj = map[string]map[string]int{
 	"a": {
@@ -40,5 +41,63 @@ var adj = map[string]map[string]int{
 
 func main() {
 	fmt.Println(adj)
-	fmt.Println(dijkstra.Dj(`b`, adj))
+	fmt.Println(dijkstra.Dj(`f`, adj))
+
+	h := new(pq.Heap)
+	h.StartHeap(16)
+
+	h.Insert(1)
+	h.Insert(2)
+	h.Insert(3)
+	h.Insert(5)
+	h.Insert(-6)
+	h.Insert(-2)
+	fmt.Println(*h)
+
+	h.ExtractMin()
+	fmt.Println(*h)
+	h.ExtractMin()
+	fmt.Println(*h)
+	h.ExtractMin()
+	fmt.Println(*h)
+	h.ExtractMin()
+	fmt.Println(*h)
+	h.ExtractMin()
+	fmt.Println(*h)
+
+	min, err := h.ExtractMin()
+	if err != nil {
+		fmt.Printf("Extracting failed: %s\n", err.Error())
+	} else {
+		fmt.Printf("%d has been extracted\n", min)
+	}
+
+	min, err = h.ExtractMin()
+	if err != nil {
+		fmt.Printf("Extracting failed: %s\n", err.Error())
+	} else {
+		fmt.Printf("%d has been extracted\n", min)
+	}
+
+	min, err = h.ExtractMin()
+	if err != nil {
+		fmt.Printf("Extracting failed: %s\n", err.Error())
+	} else {
+		fmt.Printf("%d has been extracted\n", min)
+	}
+
+	min, err = h.ExtractMin()
+	if err != nil {
+		fmt.Printf("Extracting failed: %s\n", err.Error())
+	} else {
+		fmt.Printf("%d has been extracted\n", min)
+	}
+
+	min, err = h.ExtractMin()
+	if err != nil {
+		fmt.Printf("Extracting failed: %s\n", err.Error())
+	} else {
+		fmt.Printf("%d has been extracted\n", min)
+	}
+
 }
