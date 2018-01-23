@@ -1,5 +1,10 @@
 package dijkstra
 
+import (
+	"fmt"
+	pq "goalg/pqueue"
+)
+
 type VertexData struct {
 	Parent   string
 	Distance int
@@ -24,7 +29,13 @@ func Dj(s string, g map[string]map[string]int) map[string]VertexData {
 	delete(diffvs, s)
 
 	// costs
+	// key -- vertex
+	// value -- distance from start vertex
 	costs := make(map[string]int, len(diffvs))
+
+	// priority queue
+	q := new(pq.PriorityQueue)
+	q.StartHeap(len(diffvs))
 
 	// parents
 	parent := make(map[string]string, len(diffvs))
@@ -36,15 +47,25 @@ func Dj(s string, g map[string]map[string]int) map[string]VertexData {
 				continue
 			}
 
+			d1v := dV[current] + le
 			cv, ok := costs[v]
-			if d1v := dV[current] + le; !ok || cv > d1v {
+			switch true {
+			case !ok:
+				q.Insert(v, d1v)
+				costs[v] = d1v
+				parent[v] = current
+			case cv > d1v:
+				q.ChangeKey(v, d1v)
 				costs[v] = d1v
 				parent[v] = current
 			}
 		}
 
 		// найдём ближайший к началу из узлов в костах
-		n := nearest(costs)
+		n, _, err := q.ExtractMin()
+		if err != nil {
+			panic(fmt.Sprintf("Extracting failed: %s\n", err.Error()))
+		}
 
 		dV[n] = costs[n]
 		S[n] = VertexData{parent[n], costs[n]}

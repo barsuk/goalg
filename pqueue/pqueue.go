@@ -2,52 +2,92 @@ package pqueue
 
 import "fmt"
 
-type Heap []int
-
-func (h *Heap) StartHeap(n int) {
-	*h = make([]int, 0, n)
+type PriorityQueue struct {
+	Heap     []int
+	Position []string       // position of key in the Heap slice
+	Index    map[string]int // position of key in the Heap slice
 }
 
-func (h *Heap) HeapifyUp(i int) {
+func (pq *PriorityQueue) StartHeap(n int) {
+	(*pq).Heap = make([]int, 0, n)
+	(*pq).Position = make([]string, 0, n)
+	(*pq).Index = make(map[string]int, n)
+}
+
+func (pq *PriorityQueue) HeapifyUp(i int) error {
+	h := &((*pq).Heap)
+	pos := &((*pq).Position)
+	index := &((*pq).Index)
+
 	if i > 0 {
 		var j int = (i - 1) / 2
 		if (*h)[i] < (*h)[j] {
-			(*h)[i], (*h)[j] = (*h)[j], (*h)[i]
-			h.HeapifyUp(j)
+			(*h)[i], (*h)[j], (*pos)[i], (*pos)[j] = (*h)[j], (*h)[i], (*pos)[j], (*pos)[i]
+
+			(*index)[(*pos)[i]] = i
+			(*index)[(*pos)[j]] = j
+
+			pq.HeapifyUp(j)
 		}
 	}
+
+	return nil
 }
 
-func (h *Heap) Insert(v int) {
+func (pq *PriorityQueue) Insert(k string, v int) {
+	h := &((*pq).Heap)
+
 	*h = append(*h, v)
 	i := len(*h) - 1
-	h.HeapifyUp(i)
+
+	(*pq).Position = append((*pq).Position, k)
+
+	(*pq).Index[k] = i
+
+	pq.HeapifyUp(i)
 }
 
-func (h *Heap) FindMin() (int, error) {
+func (pq *PriorityQueue) FindMin() (string, int, error) {
+	h := &((*pq).Heap)
+	p := &((*pq).Position)
+
 	if len(*h) == 0 {
-		return 0, fmt.Errorf(`heap is empty yet!`)
+		return ``, 0, fmt.Errorf(`heap is empty yet!`)
 	}
-	return (*h)[0], nil
+	return (*p)[0], (*h)[0], nil
 }
 
-func (h *Heap) ExtractMin() (int, error) {
-	min, err := h.FindMin()
+func (pq *PriorityQueue) ExtractMin() (string, int, error) {
+	key, min, err := pq.FindMin()
 	if err != nil {
-		return 0, fmt.Errorf(`unable to find minimal: %s`, err.Error())
+		return ``, 0, fmt.Errorf(`unable to find minimal: %s`, err.Error())
 	}
 
-	h.Delete(0)
+	pq.Delete(0)
 
-	return min, nil
+	return key, min, nil
 }
 
-func (h *Heap) Delete(i int) error {
+func (pq *PriorityQueue) Delete(i int) error {
+	h := &((*pq).Heap)
+	p := &((*pq).Position)
+	index := &((*pq).Index)
+
 	(*h)[i] = (*h)[len(*h)-1]
 	(*h)[len(*h)-1] = 0
 	*h = (*h)[:len(*h)-1]
 
-	err := h.HeapifyDown(i)
+	delete(*index, (*p)[i])
+
+	(*p)[i] = (*p)[len(*p)-1]
+	(*p)[len(*p)-1] = ``
+	*p = (*p)[:len(*p)-1]
+
+	if len(*p) > 0 {
+		(*index)[(*p)[i]] = i
+	}
+
+	err := pq.HeapifyDown(i)
 	if err != nil {
 		return fmt.Errorf(`unable to heapify down: %s`, err.Error())
 	}
@@ -56,7 +96,11 @@ func (h *Heap) Delete(i int) error {
 }
 
 // Orders heap after deleting an element in position i (index starts from 0!)
-func (h *Heap) HeapifyDown(i int) error {
+func (pq *PriorityQueue) HeapifyDown(i int) error {
+	h := &((*pq).Heap)
+	pos := &((*pq).Position)
+	index := &((*pq).Index)
+
 	var j, left, right int
 
 	n := len(*h)
@@ -77,8 +121,36 @@ func (h *Heap) HeapifyDown(i int) error {
 	}
 
 	if (*h)[j] < (*h)[i] {
-		(*h)[i], (*h)[j] = (*h)[j], (*h)[i]
-		h.HeapifyDown(j)
+		(*h)[i], (*h)[j], (*pos)[i], (*pos)[j] = (*h)[j], (*h)[i], (*pos)[j], (*pos)[i]
+
+		(*index)[(*pos)[i]] = i
+		(*index)[(*pos)[j]] = j
+
+		pq.HeapifyDown(j)
+	}
+
+	return nil
+}
+
+func (pq *PriorityQueue) ChangeKey(k string, new int) error {
+	h := &((*pq).Heap)
+	index := &((*pq).Index)
+
+	position, ok := (*index)[k]
+	if !ok {
+		return fmt.Errorf(`no such index: %s`, k)
+	}
+
+	oldValue := (*h)[position]
+	(*h)[position] = new
+
+	switch true {
+	case oldValue > new:
+		return pq.HeapifyDown(position)
+	case oldValue < new:
+		return pq.HeapifyUp(position)
+	case oldValue == new:
+		return nil
 	}
 
 	return nil

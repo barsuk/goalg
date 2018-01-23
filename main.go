@@ -1,6 +1,7 @@
 package main
 
 import "fmt"
+
 import "goalg/dijkstra"
 import pq "goalg/pqueue"
 
@@ -43,15 +44,28 @@ func main() {
 	fmt.Println(adj)
 	fmt.Println(dijkstra.Dj(`f`, adj))
 
-	h := new(pq.Heap)
-	h.StartHeap(16)
+	h := new(pq.PriorityQueue)
+	h.StartHeap(18)
 
-	h.Insert(1)
-	h.Insert(2)
-	h.Insert(3)
-	h.Insert(5)
-	h.Insert(-6)
-	h.Insert(-2)
+	h.Insert(`a`, 1)
+	h.Insert(`b`, 2)
+	h.Insert(`c`, 3)
+	h.Insert(`d`, 5)
+	h.Insert(`e`, -5)
+	h.Insert(`f`, -1)
+	h.Insert(`g`, 0)
+	h.Insert(`h`, 4)
+	//h.Insert(`i`, 15)
+	//h.Insert(`j`, -3)
+	//h.Insert(`k`, -4)
+	//h.Insert(`l`, -6)
+	//h.Insert(`m`, -8)
+	//h.Insert(`n`, -9)
+	//h.Insert(`o`, 12)
+	//h.Insert(`p`, 22)
+	//h.Insert(`q`, 23)
+	//h.Insert(`r`, 24)
+	//h.Insert(`s`, 25)
 	fmt.Println(*h)
 
 	h.ExtractMin()
@@ -65,39 +79,34 @@ func main() {
 	h.ExtractMin()
 	fmt.Println(*h)
 
-	min, err := h.ExtractMin()
+	h.ExtractMin()
+	fmt.Println(*h)
+	h.ExtractMin()
+	fmt.Println(*h)
+	h.ExtractMin()
+	fmt.Println(*h)
+	h.ExtractMin()
+	fmt.Println(*h)
+	h.ExtractMin()
+	fmt.Println(*h)
+
+	h.ExtractMin()
+	fmt.Println(*h)
+	h.ExtractMin()
+	fmt.Println(*h)
+
+	key, min, err := h.ExtractMin()
 	if err != nil {
 		fmt.Printf("Extracting failed: %s\n", err.Error())
 	} else {
-		fmt.Printf("%d has been extracted\n", min)
+		fmt.Printf("%s, %d have been extracted\n", key, min)
 	}
 
-	min, err = h.ExtractMin()
+	key, min, err = h.ExtractMin()
 	if err != nil {
 		fmt.Printf("Extracting failed: %s\n", err.Error())
 	} else {
-		fmt.Printf("%d has been extracted\n", min)
-	}
-
-	min, err = h.ExtractMin()
-	if err != nil {
-		fmt.Printf("Extracting failed: %s\n", err.Error())
-	} else {
-		fmt.Printf("%d has been extracted\n", min)
-	}
-
-	min, err = h.ExtractMin()
-	if err != nil {
-		fmt.Printf("Extracting failed: %s\n", err.Error())
-	} else {
-		fmt.Printf("%d has been extracted\n", min)
-	}
-
-	min, err = h.ExtractMin()
-	if err != nil {
-		fmt.Printf("Extracting failed: %s\n", err.Error())
-	} else {
-		fmt.Printf("%d has been extracted\n", min)
+		fmt.Printf("%s, %d have been extracted\n", key, min)
 	}
 
 }
