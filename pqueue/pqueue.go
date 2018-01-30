@@ -9,15 +9,15 @@ type PriorityQueue struct {
 }
 
 func (pq *PriorityQueue) StartHeap(n int) {
-	(*pq).Heap = make([]int, 0, n)
-	(*pq).Position = make([]string, 0, n)
-	(*pq).Index = make(map[string]int, n)
+	pq.Heap = make([]int, 0, n)
+	pq.Position = make([]string, 0, n)
+	pq.Index = make(map[string]int, n)
 }
 
 func (pq *PriorityQueue) HeapifyUp(i int) error {
-	h := &((*pq).Heap)
-	pos := &((*pq).Position)
-	index := &((*pq).Index)
+	h := &(pq.Heap)
+	pos := &(pq.Position)
+	index := &(pq.Index)
 
 	if i > 0 {
 		var j int = (i - 1) / 2
@@ -35,21 +35,21 @@ func (pq *PriorityQueue) HeapifyUp(i int) error {
 }
 
 func (pq *PriorityQueue) Insert(k string, v int) {
-	h := &((*pq).Heap)
+	h := &(pq.Heap)
 
 	*h = append(*h, v)
 	i := len(*h) - 1
 
-	(*pq).Position = append((*pq).Position, k)
+	pq.Position = append(pq.Position, k)
 
-	(*pq).Index[k] = i
+	pq.Index[k] = i
 
 	pq.HeapifyUp(i)
 }
 
 func (pq *PriorityQueue) FindMin() (string, int, error) {
-	h := &((*pq).Heap)
-	p := &((*pq).Position)
+	h := &(pq.Heap)
+	p := &(pq.Position)
 
 	if len(*h) == 0 {
 		return ``, 0, fmt.Errorf(`heap is empty yet!`)
@@ -69,9 +69,9 @@ func (pq *PriorityQueue) ExtractMin() (string, int, error) {
 }
 
 func (pq *PriorityQueue) Delete(i int) error {
-	h := &((*pq).Heap)
-	p := &((*pq).Position)
-	index := &((*pq).Index)
+	h := &(pq.Heap)
+	p := &(pq.Position)
+	index := &(pq.Index)
 
 	(*h)[i] = (*h)[len(*h)-1]
 	(*h)[len(*h)-1] = 0
@@ -97,9 +97,9 @@ func (pq *PriorityQueue) Delete(i int) error {
 
 // Orders heap after deleting an element in position i (index starts from 0!)
 func (pq *PriorityQueue) HeapifyDown(i int) error {
-	h := &((*pq).Heap)
-	pos := &((*pq).Position)
-	index := &((*pq).Index)
+	h := &(pq.Heap)
+	pos := &(pq.Position)
+	index := &(pq.Index)
 
 	var j, left, right int
 
@@ -133,8 +133,8 @@ func (pq *PriorityQueue) HeapifyDown(i int) error {
 }
 
 func (pq *PriorityQueue) ChangeKey(k string, new int) error {
-	h := &((*pq).Heap)
-	index := &((*pq).Index)
+	h := &(pq.Heap)
+	index := &(pq.Index)
 
 	position, ok := (*index)[k]
 	if !ok {
